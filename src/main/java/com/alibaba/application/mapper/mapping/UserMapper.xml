@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.application.mapper.UserMapper">
+
+    <!--注册用户-->
+    <insert id="insert" parameterType="com.alibaba.application.entity.User">
+        insert into user (name,password,power,question,answer) value (#{name},#{password},#{power},#{question},#{answer});
+    </insert>
+
+    <!--查询用户-->
+    <select id="selectUserByName" parameterType="com.alibaba.application.entity.User" resultType="com.alibaba.application.entity.User">
+        select id,name,password,power,question,answer from user where name = #{name}
+    </select>
+
+    <!--查询用户通过id-->
+    <select id="selectUserByID" parameterType="int" resultType="com.alibaba.application.entity.User">
+        select id,name,password,power,question,answer from user where id = #{id}
+    </select>
+
+
+    <!--查询所有用户-->
+    <select id="selectUserList" parameterType="com.alibaba.application.entity.PageInfo" resultType="com.alibaba.application.entity.User">
+        select id,name,password,power,question,answer
+        from user
+        <where>
+            <if test="name != null">
+                name LIKE '%${name}%'
+            </if>
+            and power != 0
+        </where>
+        order by id asc
+        limit #{page},#{limit}
+    </select>
+
+    <!--查询所有用户数量-->
+    <select id="selectUserCount" parameterType="com.alibaba.application.entity.PageInfo" resultType="int">
+        select count(1)
+        from user
+        <where>
+            <if test="name != null">
+                name LIKE '%${name}%'
+            </if>
+            and  power != 0
+        </where>
+    </select>
+
+    <!--删除其中某个用户-->
+
+    <delete id="delUserById" parameterType="int">
+        delete from user where id = #{id}
+    </delete>
+
+    <update id="updateUserByName" parameterType="com.alibaba.application.entity.User">
+        update user set password = #{password} where name = #{name}
+    </update>
+
+
+    <update id="updatePasswordById" parameterType="com.alibaba.application.entity.User">
+        update user set password = #{password} where id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>编辑用户-WeAdmin Frame型后台管理系统-WeAdmin 1.0</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="/static/css/font.css">
+		<link rel="stylesheet" href="/static/css/weadmin.css">
+		<script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+		<script src="/static/js/jquery-3.4.0.min.js"></script>
+		<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+		<!--[if lt IE 9]>
+	      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+	      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+	    <![endif]-->
+	</head>
+
+	<body>
+		<div class="weadmin-body">
+			<form class="layui-form">
+				<div class="layui-form-item">
+					<label for="username" class="layui-form-label">
+                  <span class="we-red">*</span>用户名
+              </label>
+					<div class="layui-input-inline">
+						<input type="text" id="name" th:value="${editUser.name}"  readonly="true" name="username" required="" lay-verify="required" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="username" class="layui-form-label">
+                  <span class="we-red">*</span>密码
+              </label>
+					<div class="layui-input-inline">
+						<input type="text" id="password" th:value="${editUser.password}" name="username" required="" lay-verify="required" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="phone" class="layui-form-label">
+                  <span class="we-red">*</span>密保问题
+              </label>
+					<div class="layui-input-inline">
+						<input type="text" id="question" th:value="${editUser.question}" readonly="true" name="phone" required="" lay-verify="phone" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="username" class="layui-form-label">
+                  <span class="we-red">*</span>密保答案
+              </label>
+					<div class="layui-input-inline">
+						<input type="text" id="answer" th:value="${editUser.answer}"  readonly="true" name="username" required="" lay-verify="required" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+
+
+		</div>
+		<div class="layui-form-item">
+			<label for="L_repass" class="layui-form-label">
+              </label>
+			<button class="layui-btn" id="editBtn">修改</button>
+		</div>
+		</form>
+		</div>
+		<script>
+			layui.extend({
+				admin: '{/}../../static/js/admin'
+			});
+			layui.use(['form', 'admin', 'jquery', 'table', 'layer'], function() {
+				var form = layui.form,
+					admin = layui.admin,
+					$ = layui.jquery,
+					table = layui.table,
+					layer = layui.layer;
+
+
+			});
+            $("#editBtn").click(function () {
+                var password = $("#password").val();
+                var name = $("#name").val();
+                console.log(password + " ," + name);
+				$.post(
+				    "/edit-user-now",
+					{
+					    name:name,
+						password:password
+					},
+					function (d) {
+				        console.log(d);
+						if(d == "success") {
+						    layer.msg("修改成功，正在跳转...");
+                            var t =setTimeout(window.location.href = "/user",3000);
+						}else {
+                            layer.msg("修改失败");
+						}
+                    }
+                );
+            });
+		</script>
+	</body>
+
+</html>

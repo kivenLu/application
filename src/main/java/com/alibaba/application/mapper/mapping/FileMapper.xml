@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.application.mapper.FileMapper">
+    <!--插入xls文件信息-->
+    <insert id="insertToXls" parameterType="com.alibaba.application.entity.Xls" useGeneratedKeys="true" keyProperty="id">
+        insert into xls (xls_name,date,user_id) value(#{xlsName},#{date},#{userId});
+    </insert>
+
+    <!--插入xls中的survey数据信息-->
+    <insert id="insertToSurvey" parameterType="com.alibaba.application.entity.Survey">
+        insert into survey (question,answer,xls_id) value(#{question},#{answer},#{xlsId});
+    </insert>
+
+    <!--查询xls  返回id-->
+    <select id="selectXlsByName" parameterType="com.alibaba.application.entity.Xls" resultType="int">
+      select id from xls where xls_name = #{xlsName};
+    </select>
+
+    <!--查询xls  返回所有xls-->
+    <select id="selectXlsById" parameterType="com.alibaba.application.entity.XlsInfo" resultType="com.alibaba.application.entity.Xls">
+      select id,xls_name as xlsName,date,user_id as userId from xls
+      <where>
+          <if test="power != null and power == 0">
+
+          </if>
+          <if test="power != null and power == 1">
+           and  user_id = #{id}
+          </if>
+          <if test="xlsName != null">
+             and xls_name LIKE '%${xlsName}%'
+          </if>
+          <if test="xlsName != null and power != 0">
+              and  user_id = #{id}
+          </if>
+      </where>
+      order by date desc
+      limit #{page},#{limit}
+    </select>
+
+    <!--查询xls  返回总数-->
+    <select id="selectCountById" parameterType="com.alibaba.application.entity.XlsInfo" resultType="int">
+        select count(1) from xls
+        <where>
+            <if test="power != null and power == 0">
+
+            </if>
+            <if test="power != null and power == 1">
+            and   user_id = #{id}
+            </if>
+            <if test="xlsName != null">
+            and   xls_name LIKE '%${xlsName}%'
+            </if>
+            <if test="xlsName != null and power != 0">
+                and  user_id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <!--查询当前xls的所有答案-->
+    <select id="selectSurveyByXlsId" parameterType="int" resultType="com.alibaba.application.entity.Survey">
+        select id,question,answer,xls_id as xlsId from survey where xls_id = #{id}
+    </select>
+
+    <!--查询当前xls有多少个问题-->
+    <select id="selectQuestionCountByXlsId" parameterType="int" resultType="string">
+        SELECT distinct question FROM `survey`  where xls_id = #{id};
+    </select>
+
+    <!--查询当前question有多少种答案-->
+    <select id="selectAnswerByQuestion" parameterType="com.alibaba.application.entity.SelectModel" resultType="string">
+        select distinct answer from survey where xls_id = #{id} and question = #{question};
+    </select>
+
+    <!--查询当前answer的统计数-->
+    <select id="selectAnswerCountByAnswer" parameterType="com.alibaba.application.entity.SelectModel" resultType="int">
+        select count(1) from survey where xls_id = #{id} and answer = #{answer} and question = #{question};
+    </select>
+
+    <!--删除xls-->
+    <delete id="delXlsById" parameterType="int">
+      delete from xls where id = #{id}
+    </delete>
+
+    <!--删除survey-->
+    <delete id="delSurveyById" parameterType="int">
+      delete from survey where xls_id = #{id}
+    </delete>
+
+</mapper>

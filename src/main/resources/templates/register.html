@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>问卷分析系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta name="keywords" content="" />
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/static/layui/css/layui.css" rel="stylesheet" type="text/css" media="all"/>
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/js/jquery-3.4.0.min.js"></script>
+</head>
+<body>
+<div class="signupform">
+    <h1>问卷分析系统注册</h1>
+    <div class="container">
+
+        <div class="agile_info">
+            <div class="w3l_form">
+                <div class="left_grid_info">
+                    <h3>Welcome !</h3>
+                    <h4>Lorem ipsum dolor sit amet, nulla consectetur adipiscing elit Sed.</h4>
+                    <p> Nam eleifend velit eget dolor vestibulum ornare. Vestibulum est nulla, fermentum eget euismod et, tincidunt at dui. Nulla tellus nisl, semper id justo vel, rutrum finibus risus. Cras vel auctor odio.</p>
+                    <ul class="social_section_1info">
+                        <li><a href="#" class="w3_facebook"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#" class="w3_twitter"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#" class="w3_instagram"><i class="fa fa-instagram"></i></a></li>
+                        <li><a href="#" class="w3_google"><i class="fa fa-google-plus"></i></a></li>
+                        <li><a href="#" class="w3_pinterest"><i class="fa fa-pinterest"></i></a></li>
+                        <li><a href="#" class="w3_vimeo"><i class="fa fa-vimeo"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w3_info">
+                <h2>创建一个账号</h2>
+                <p>Create An Account.</p>
+                <form class="layui-form">
+                    <div class="input-group">
+                        <span><i class="fa fa-user" aria-hidden="true"></i></span>
+                        <input type="text" name="name" id="name" placeholder="请输入用户名" style="text-transform:lowercase;"  lay-ignore>
+                    </div>
+                    <div class="input-group">
+                        <span><i class="fa fa-lock" aria-hidden="true"></i></span>
+                        <input type="Password" name="password" id="p1" placeholder="请输入密码"  lay-ignore>
+                    </div>
+                    <div class="input-group">
+                        <span><i class="fa fa-lock" aria-hidden="true"></i></span>
+                        <input type="Password" name="password" id="p2" placeholder="请再输入一次密码"  lay-ignore>
+                    </div>
+                    <div class="input-group">
+                        <span><i class="fa fa-user" aria-hidden="true"></i></span>
+                        <input type="text" name="question" id="question"  placeholder="请输入密保问题" style="text-transform:lowercase;"  lay-ignore>
+                    </div>
+                    <div class="input-group">
+                        <span><i class="fa fa-user" aria-hidden="true"></i></span>
+                        <input type="text" name="answer" id="answer" placeholder="请输入密码答案" style="text-transform:lowercase;" lay-ignore>
+                    </div>
+                    <button class="btn btn-danger btn-block" lay-filter="formDemo" id="btn" lay-submit>创建一个账户</button >
+                    <a href="/toLogin" style="color:#4395FF;position:relative;top:10px;font-size: 14px; ">已有账号?前去登录</a>
+                </form>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+    </div>
+    <div class="footer">
+        <p>Copyright &copy; 2019.问卷分析 All rights reserved.</p>
+    </div>
+</div>
+<script>
+    function ErroAlert(e) {
+        var index = layer.alert(e, { icon: 5, time: 2000, offset: 't', closeBtn: 0, title: '错误信息', btn: [], anim: 2, shade: 0 });
+        layer.style(index, {
+            color: '#777'
+        });
+    }
+
+    //Demo
+    layui.use('form', function(){
+        var form = layui.form;
+        //监听提交
+        form.on('submit()', function(data){
+            // layer.msg(JSON.stringify(data.field));
+            // console.log(p1 + "   " + p2);
+            // console.log(data.field);
+            // console.log("我就说你过不来吧");
+            return false;
+        });
+    });
+
+    $("#btn").click(function () {
+        var p1 = $("#p1").val();
+        var p2 = $("#p2").val();
+        var name = $("#name").val();
+        var question = $("#question").val();
+        var answer = $("#answer").val();
+        if (name == null || name == "") {
+            ErroAlert("用户名不能为空!");
+            return false;
+        }else if (p1 == null || p1 == "" || p2 == null || p2 == "" ) {
+            ErroAlert("密码不能为空!");
+            return false;
+        }else if (p1 != p2) {
+            ErroAlert("两次输入的密码不一致!");
+            return false;
+        }else if (question == null || question == "") {
+            ErroAlert("密保问题不能为空!");
+            return false;
+        }else if(answer == null || answer == ""){
+            ErroAlert("答案不能为空!");
+            return false;
+        }else  {
+            console.log(name + ", " + p2 + ",  " + answer + ',  ' + question);
+            $.post(
+                "/registerUser",
+                {
+                    name:name,
+                    password:p2,
+                    question:question,
+                    answer:answer
+                },
+                function (data) {
+                    if (data == "success") {
+                        window.location.href = "/index";
+                    }else if (data == "fail") {
+                        ErroAlert("该用户已经注册,请更换其他账号!");
+                    }else {
+                        ErroAlert("系统异常，请重新刷新尝试!");
+                    }
+                    console.log(data);
+                }
+            );
+        }
+    });
+</script>
+</body>
+</html>
